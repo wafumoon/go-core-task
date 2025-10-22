@@ -1,0 +1,71 @@
+﻿package main
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
+	"reflect"
+	"strings"
+)
+
+func main() {
+
+	//ЗАДАНИЕ 1.1
+	variables := []interface{}{
+		42,
+		052,
+		0x2A,
+		3.14,
+		"Golang",
+		true,
+		1 + 2i,
+	}
+
+	//ЗАДАНИЕ 1.2
+
+	fmt.Println("ЗАДАНИЕ 1.2:")
+	for _, v := range variables {
+		defineType(v)
+	}
+
+	//ЗАДАНИЕ 1.3
+	stringOfVariables := transformToString(variables)
+	fmt.Println("ЗАДАНИЕ 1.3:", stringOfVariables)
+
+	//ЗАДАНИЕ 1.4
+	runesOfStrings := stringToRunes(stringOfVariables)
+	fmt.Println("ЗАДАНИЕ 1.4:", runesOfStrings)
+
+	//ЗАДАНИЕ 1.5
+	hashOfRunes := hashRunesWithSalt(runesOfStrings, "go-2024")
+	fmt.Println("ЗАДАНИЕ 1.5:", hashOfRunes)
+}
+
+//ТЕХНИЧЕСКИЕ ФУНКЦИИ
+
+func defineType(value any) {
+	fmt.Println("|", reflect.TypeOf(value))
+}
+
+func transformToString(values []interface{}) string {
+	var builder strings.Builder
+
+	for _, v := range values {
+		builder.WriteString(fmt.Sprintf("%v", v))
+	}
+
+	return builder.String()
+}
+
+func stringToRunes(s string) []rune {
+	return []rune(s)
+}
+
+func hashRunesWithSalt(runes []rune, salt string) string {
+	str := string(runes)
+	middle := len(str) / 2
+	salted := str[:middle] + salt + str[middle:]
+
+	hash := sha256.Sum256([]byte(salted))
+	return hex.EncodeToString(hash[:])
+}
